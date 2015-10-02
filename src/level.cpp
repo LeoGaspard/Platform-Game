@@ -49,8 +49,6 @@ using namespace std;
      flux >> mapWidth;
      flux >> mapHeight;
      
-     cout << mapWidth << " " << mapHeight << endl;
-     
      for(int i = 0; i < mapHeight; i++)
        map.push_back(vector<int>(mapWidth));
      for(int i = 1; i < mapWidth; i++)

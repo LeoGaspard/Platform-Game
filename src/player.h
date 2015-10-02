@@ -14,6 +14,7 @@
 #define PLAYER_H_INCLUDED
 
 #include <SFML/Graphics.hpp>
+#include <map>
 #include "level.h"
 #include "main.h"
 
@@ -30,7 +31,9 @@ private :
   
   
   int posX, posY, speed, lives, maxLives, playerHeight, playerWidth;
+  float jumpSpeed;
   bool stateWalking, stateJumping, stateFalling, stateDying, direction;
+  std::map<sf::Keyboard::Key, bool> inputMap;
   sf::Texture spriteSheet;
   sf::Sprite playerSprite;
   
