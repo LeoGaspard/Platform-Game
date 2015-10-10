@@ -21,14 +21,17 @@ using namespace std;
 Player::Player()
 {
 posX = posY = 0;
-stateWalking = stateJumping = stateFalling = stateDying = false;
+stateWalking = stateFalling = stateDying = false;
 direction = true;
 lives = 3;
 maxLives = 3; 
 playerHeight = 50;
-playerWidth = 40; 
+playerWidth = 38; 
 jumpSpeed = 0.0f;
-if(!spriteSheet.loadFromFile("pictures/SpriteSheet.png"))
+spriteX = 0;
+spriteY = 0;
+spriteChange = 0;
+if(!spriteSheet.loadFromFile("pictures/sprite.png"))
 cout << "ERROR : Can't load SpriteSheet";
 }
 
@@ -43,9 +46,6 @@ Player::~Player()
 
 void Player::movement(Level& level, sf::RenderWindow& window)
 {
-    playerSprite.setTexture(spriteSheet);
-    playerSprite.setTextureRect(sf::IntRect(0,0,playerWidth,playerHeight));
-
     if(level.getMap((posY+playerHeight) / TILE_HEIGHT, (posX + level.getScroll() + 10) / TILE_WIDTH) != 0)
     {
         stateFalling = false; 
@@ -70,26 +70,26 @@ void Player::movement(Level& level, sf::RenderWindow& window)
                 window.close();
             break;
             
-            case sf::Event::KeyPressed:
-        switch(event.key.code)
-        {
-            case sf::Keyboard::Escape:
-                window.close();
-            break;
-            
-            default:
-                inputMap[event.key.code] = true;
-            break;
-        }
-            break;
-            
+            case sf::Event::KeyPressed:                
+                switch(event.key.code)
+                {
+                    case sf::Keyboard::Escape:
+                        window.close();
+                    break;
+                    
+                    default:
+                        inputMap[event.key.code] = true;
+                    break;
+                }
+                    break;
+                    
             case sf::Event::KeyReleased:
                 inputMap[event.key.code] = false;
             break;
-            
+                    
             default:
-        break;	
-        }
+                break;	
+          }
     }
 
     if(inputMap[sf::Keyboard::Up])
@@ -166,14 +166,70 @@ void Player::movement(Level& level, sf::RenderWindow& window)
             if(posX < 250 && level.getScroll() > 0)
                 level.setScroll(-speed);
             else
-                posX -= speed;           
+                posX -= speed;
         }
     }
 
     if(level.getMap((posY+playerHeight) / TILE_HEIGHT, (posX + level.getScroll() + 10)/TILE_WIDTH) != 0 || level.getMap((posY+playerHeight) / TILE_HEIGHT, (posX + level.getScroll() + playerWidth - 10) / TILE_WIDTH) != 0)
         posY = ((posY+playerHeight)/ TILE_HEIGHT) * TILE_HEIGHT - playerHeight;
+    
+    animation(window);
+    
+    
+    
+}
 
+//ANIMATION
+
+void Player::animation(sf::RenderWindow& window)
+{
+    playerSprite.setTexture(spriteSheet);
+    
+    if(stateWalking && !stateFalling && direction)
+    {
+        spriteY = 0;
+        if(spriteChange == 4)
+        {
+            spriteX = (spriteX + playerWidth)%114;
+            spriteChange = 0;
+        }
+        
+        spriteChange++;
+        
+    }
+    
+    if(stateWalking && !stateFalling && !direction)
+    {
+        spriteY = 50;
+        
+        if(spriteChange == 4)
+        {
+            spriteX = (spriteX + playerWidth)%114;
+            spriteChange = 0;
+        }
+        
+        spriteChange++;
+    }
+    
+    if(stateFalling && jumpSpeed > 0 )
+    {
+        if(direction)
+            spriteY = 100;
+        else
+            spriteY = 150;
+        if(spriteChange == 4)
+        {
+            spriteX = (spriteX + playerWidth)%76;
+            spriteChange = 0;
+        }
+        
+        spriteChange++;
+    }
+    
+    if(!stateWalking)
+        spriteX = 0;    
+    
+    playerSprite.setTextureRect(sf::IntRect(spriteX,spriteY,playerWidth,playerHeight));
     playerSprite.setPosition(sf::Vector2f(posX, posY));
     window.draw(playerSprite);
-    
 }
