@@ -70,7 +70,7 @@ using namespace std;
    
    if(!tileSet.loadFromFile("pictures/tileSet1.png"))
       cout << "ERROR : Can't load image" << endl;
-   if(!bg.loadFromFile("pictures/background1.png"))
+   if(!bg.loadFromFile("pictures/background.png"))
        cout << "ERROR : Can't load image" << endl;
    
  }
@@ -89,7 +89,7 @@ using namespace std;
     
   for(int i = 0; i < mapHeight; i++)
    {
-     for(int j = (scrollX/TILE_WIDTH); j < ((scrollX+WINDOW_WIDTH)/TILE_WIDTH); j++)
+     for(int j = (scrollX/TILE_WIDTH); j <= ((scrollX+WINDOW_WIDTH)/TILE_WIDTH); j++)
      {
        int x = 0, y = 0;
        x = map[i][j] * 32;
@@ -99,7 +99,7 @@ using namespace std;
 	 y += 32;	 
        }
        
-      posX = 32*(j-(scrollX/TILE_WIDTH));
+      posX = 32*(j-(scrollX/TILE_WIDTH))- scrollX%32;
       posY = 32*i;
       
       tile.setTexture(tileSet);
