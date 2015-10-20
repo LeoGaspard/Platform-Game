@@ -31,7 +31,7 @@ public :
 private :
   
   
-  int posX, posY, speed, lives, maxLives, playerHeight, playerWidth, spriteX, spriteY, spriteChange;
+  int posX, posY, speed, lives, maxLives, spriteX, spriteY, spriteChange;
   float jumpSpeed;
   bool stateWalking, stateJumping, stateFalling, stateDying, direction;
   std::map<sf::Keyboard::Key, bool> inputMap;

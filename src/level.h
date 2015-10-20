@@ -30,7 +30,13 @@ public :
   void setScroll(int scroll);
   int getMap(int x, int y);
   int getScroll();
-  int getMapWidth(); 
+  int getMapWidth();
+  bool bottomCollision(int posX, int posY);
+  bool rightCollision(int posX, int posY, int speed);
+  bool leftCollision(int posX, int posY, int speed);
+  bool topCollision(int posX, int posY);
+  
+  
   
   
 private :

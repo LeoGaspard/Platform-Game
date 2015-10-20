@@ -17,7 +17,9 @@
 
 using namespace std;
 
-//CONSTRUCTOR   
+/*******************
+ *   CONSTRUCTOR   * 
+ *******************/
 
  
  Level::Level()
@@ -25,14 +27,18 @@ using namespace std;
    scrollX = 0;   
  }
  
-//DESTRUCTOR
+/*******************
+ *    DESTRUCTOR   *
+ *******************/
  
  Level::~Level()
  {
    //nothing
  }
  
-// LOAD MAP
+/*******************
+ *    LOAD MAP     *
+ *******************/
  
  void Level::loadMap(string fileName)
  {
@@ -68,14 +74,16 @@ using namespace std;
    else
      cout << "ERROR : Can't open the file " << fileName << endl;
    
-   if(!tileSet.loadFromFile("pictures/tileSet1.png"))
+   if(!tileSet.loadFromFile("pictures/tileSet.png"))
       cout << "ERROR : Can't load image" << endl;
    if(!bg.loadFromFile("pictures/background.png"))
        cout << "ERROR : Can't load image" << endl;
    
  }
  
-//PRINT MAP
+/******************
+ *   PRINT MAP    *
+ ******************/
 
  void Level::printMap(sf::RenderWindow& window)
  {
@@ -93,10 +101,10 @@ using namespace std;
      {
        int x = 0, y = 0;
        x = map[i][j] * 32;
-       while(x > 320)
+       while(x >= 320)
        {
-	 x -= 320;
-	 y += 32;	 
+            x -= 320;
+            y += 32;	 
        }
        
       posX = 32*(j-(scrollX/TILE_WIDTH))- scrollX%32;
@@ -112,7 +120,9 @@ using namespace std;
    
  }
 
-//SET SCROLL 
+/******************
+ *   SET SCROLL   *
+ ******************/ 
 
 void Level::setScroll(int scroll)
 {
@@ -124,23 +134,66 @@ void Level::setScroll(int scroll)
     scrollX = 0;
 }
 
-//GET MAP
+/******************
+ *    GET MAP     *
+ ******************/
 
 int Level::getMap(int x, int y)
 {
   return map[x][y];
 }
 
-//GET SCROLL
+/******************
+ *   GET SCROLL   *
+ ******************/
 
 int Level::getScroll()
 {
   return scrollX;
 }
 
-//GET MAP MAPWIDTH
+/******************
+ *  GET MAPWIDTH  *
+ ******************/
 
 int Level::getMapWidth()
 {
   return mapWidth;
+}
+
+/******************
+ *BOTTOM COLLISION*
+ ******************/
+
+bool Level::bottomCollision(int posX, int posY)
+{
+    return (map[(posY + PLAYER_HEIGHT) / TILE_HEIGHT][(posX + scrollX + 10) / TILE_WIDTH] != 0) || (map[(posY + PLAYER_HEIGHT) / TILE_HEIGHT][(posX + PLAYER_WIDTH + scrollX - 10) / TILE_WIDTH] != 0);
+    
+}
+
+/******************
+ * RIGHT COLLISION*
+ ******************/
+
+bool Level::rightCollision(int posX, int posY, int speed)
+{
+    return (map[(posY + PLAYER_HEIGHT - 18) / TILE_HEIGHT][(posX + PLAYER_WIDTH + speed + scrollX) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX + PLAYER_WIDTH + speed + scrollX) / TILE_WIDTH] != 0);
+}
+
+/******************
+ * LEFT COLLISION *
+ ******************/
+
+bool Level::leftCollision(int posX, int posY, int speed)
+{
+    return (map[(posY + PLAYER_HEIGHT - 18) / TILE_HEIGHT][(posX - speed + scrollX) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX - speed + scrollX) / TILE_WIDTH] != 0);
+}
+
+/******************
+ * TOP COLLISION  *
+ ******************/
+
+bool Level::topCollision(int posX, int posY)
+{
+    return (map[posY / TILE_HEIGHT][(posX + scrollX + 10) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX + PLAYER_WIDTH + scrollX - 10) / TILE_WIDTH] != 0);
 }

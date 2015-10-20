@@ -18,5 +18,7 @@ int const WINDOW_WIDTH = 1280;
 int const WINDOW_HEIGHT = 480;
 int const TILE_WIDTH = 32;
 int const TILE_HEIGHT = 32;
+int const PLAYER_HEIGHT = 50;
+int const PLAYER_WIDTH = 38;
 
 #endif

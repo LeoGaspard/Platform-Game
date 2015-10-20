@@ -24,9 +24,7 @@ posX = posY = 0;
 stateWalking = stateFalling = stateDying = false;
 direction = true;
 lives = 3;
-maxLives = 3; 
-playerHeight = 50;
-playerWidth = 38; 
+maxLives = 3;
 jumpSpeed = 0.0f;
 spriteX = 0;
 spriteY = 0;
@@ -46,20 +44,13 @@ Player::~Player()
 
 void Player::movement(Level& level, sf::RenderWindow& window)
 {
-    if(level.getMap((posY+playerHeight) / TILE_HEIGHT, (posX + level.getScroll() + 10) / TILE_WIDTH) != 0)
-    {
-        stateFalling = false; 
-        jumpSpeed = 0.0f;
-    }
-    else if(level.getMap((posY + playerHeight) / TILE_HEIGHT, (posX + playerWidth + level.getScroll() - 10) / TILE_WIDTH) != 0)
+    if(level.bottomCollision(posX, posY))
     {
         stateFalling = false;
         jumpSpeed = 0.0f;
     }
-    else if(level.getMap((posY+playerHeight) / TILE_HEIGHT, (posX + level.getScroll() + playerWidth - 10) / TILE_WIDTH) == 0) 
-    {
-        stateFalling = true;
-    }  
+    else
+        stateFalling = true; 
 
     sf::Event event;
     while(window.pollEvent(event))
@@ -119,7 +110,7 @@ void Player::movement(Level& level, sf::RenderWindow& window)
         posY-=(int)jumpSpeed;
         jumpSpeed -= 0.5;
         
-        while(jumpSpeed > 0 && level.getMap((posY - jumpSpeed) / TILE_HEIGHT, (posX + level.getScroll() + 10) / TILE_WIDTH) != 0 || level.getMap((posY - jumpSpeed) / TILE_HEIGHT, (posX + playerWidth + level.getScroll() - 10) / TILE_WIDTH) != 0)
+        while(jumpSpeed > 0 && level.topCollision(posX, posY))
         {
             jumpSpeed--;
         }
@@ -139,9 +130,9 @@ void Player::movement(Level& level, sf::RenderWindow& window)
             moveTest = true;
         }
 
-        if(direction && posX < (1280-playerWidth))
+        if(direction && posX < (1280 - PLAYER_WIDTH))
         {
-            while(level.getMap((posY + playerHeight - 18) / TILE_HEIGHT, (posX + playerWidth + speed + level.getScroll()) / TILE_WIDTH) != 0 || level.getMap((posY) / TILE_HEIGHT, (posX + playerWidth + speed + level.getScroll()) / TILE_WIDTH) != 0)
+            while(level.rightCollision(posX, posY, speed))
             {
                 speed--;                
                 if(speed == 0)
@@ -156,7 +147,7 @@ void Player::movement(Level& level, sf::RenderWindow& window)
 
         if(!direction && posX > 0 && moveTest)
         {
-            while(level.getMap((posY + playerHeight - 18) / TILE_HEIGHT, (posX - speed + level.getScroll()) / TILE_WIDTH) != 0 || level.getMap((posY) / TILE_HEIGHT, (posX - speed + level.getScroll()) / TILE_WIDTH) != 0)
+            while(level.leftCollision(posX, posY, speed))
             {
                 speed--;
                 if(speed == 0)
@@ -170,8 +161,8 @@ void Player::movement(Level& level, sf::RenderWindow& window)
         }
     }
 
-    if(level.getMap((posY+playerHeight) / TILE_HEIGHT, (posX + level.getScroll() + 10)/TILE_WIDTH) != 0 || level.getMap((posY+playerHeight) / TILE_HEIGHT, (posX + level.getScroll() + playerWidth - 10) / TILE_WIDTH) != 0)
-        posY = ((posY+playerHeight)/ TILE_HEIGHT) * TILE_HEIGHT - playerHeight;
+    if(level.bottomCollision(posX, posY))
+        posY = ((posY + PLAYER_HEIGHT)/ TILE_HEIGHT) * TILE_HEIGHT - PLAYER_HEIGHT;
     
     animation(window);
     
@@ -190,7 +181,7 @@ void Player::animation(sf::RenderWindow& window)
         spriteY = 0;
         if(spriteChange == 4)
         {
-            spriteX = (spriteX + playerWidth)%114;
+            spriteX = (spriteX + PLAYER_WIDTH)%114;
             spriteChange = 0;
         }
         
@@ -200,11 +191,11 @@ void Player::animation(sf::RenderWindow& window)
     
     if(stateWalking && !stateFalling && !direction)
     {
-        spriteY = 50;
+        spriteY = PLAYER_HEIGHT;
         
         if(spriteChange == 4)
         {
-            spriteX = (spriteX + playerWidth)%114;
+            spriteX = (spriteX + PLAYER_WIDTH)%114;
             spriteChange = 0;
         }
         
@@ -214,22 +205,28 @@ void Player::animation(sf::RenderWindow& window)
     if(stateFalling && jumpSpeed > 0 )
     {
         if(direction)
-            spriteY = 100;
+            spriteY = 2*PLAYER_HEIGHT;
         else
-            spriteY = 150;
+            spriteY = 3*PLAYER_HEIGHT;
         if(spriteChange == 4)
         {
-            spriteX = (spriteX + playerWidth)%76;
+            spriteX = (spriteX + PLAYER_WIDTH)%76;
             spriteChange = 0;
         }
         
         spriteChange++;
     }
     
-    if(!stateWalking)
-        spriteX = 0;    
+   if(!stateWalking && !stateFalling)
+    {
+        spriteX = 0;
+        if(direction)
+            spriteY = 0;
+        if(!direction)
+            spriteY = PLAYER_HEIGHT;
+    }
     
-    playerSprite.setTextureRect(sf::IntRect(spriteX,spriteY,playerWidth,playerHeight));
+    playerSprite.setTextureRect(sf::IntRect(spriteX,spriteY,PLAYER_WIDTH,PLAYER_HEIGHT));
     playerSprite.setPosition(sf::Vector2f(posX, posY));
     window.draw(playerSprite);
 }
