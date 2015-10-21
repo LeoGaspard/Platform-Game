@@ -5,8 +5,6 @@
  * 
  * Author: NehZio <leo.gaspard@outlook.fr>
  * 
- * Description: The class level
- * 
  * Created: 28/08/15
  * =========================
  **/
@@ -167,8 +165,10 @@ int Level::getMapWidth()
 
 bool Level::bottomCollision(int posX, int posY)
 {
-    return (map[(posY + PLAYER_HEIGHT) / TILE_HEIGHT][(posX + scrollX + 10) / TILE_WIDTH] != 0) || (map[(posY + PLAYER_HEIGHT) / TILE_HEIGHT][(posX + PLAYER_WIDTH + scrollX - 10) / TILE_WIDTH] != 0);
-    
+    if(posY + PLAYER_HEIGHT >= 0 && posY + PLAYER_HEIGHT <= WINDOW_HEIGHT)
+        return (map[(posY + PLAYER_HEIGHT) / TILE_HEIGHT][(posX + scrollX + 10) / TILE_WIDTH] != 0) || (map[(posY + PLAYER_HEIGHT) / TILE_HEIGHT][(posX + PLAYER_WIDTH + scrollX - 10) / TILE_WIDTH] != 0);
+    else
+        return false;
 }
 
 /******************
@@ -177,7 +177,11 @@ bool Level::bottomCollision(int posX, int posY)
 
 bool Level::rightCollision(int posX, int posY, int speed)
 {
-    return (map[(posY + PLAYER_HEIGHT - 18) / TILE_HEIGHT][(posX + PLAYER_WIDTH + speed + scrollX) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX + PLAYER_WIDTH + speed + scrollX) / TILE_WIDTH] != 0);
+    if(posY + PLAYER_HEIGHT >= 0 && posY >= 0 && posY + PLAYER_HEIGHT <= WINDOW_HEIGHT && posY <= WINDOW_HEIGHT)
+        return (map[(posY + PLAYER_HEIGHT - 18) / TILE_HEIGHT][(posX + PLAYER_WIDTH + speed + scrollX) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX + PLAYER_WIDTH + speed + scrollX) / TILE_WIDTH] != 0);
+    else
+        return false;
+    
 }
 
 /******************
@@ -186,7 +190,10 @@ bool Level::rightCollision(int posX, int posY, int speed)
 
 bool Level::leftCollision(int posX, int posY, int speed)
 {
-    return (map[(posY + PLAYER_HEIGHT - 18) / TILE_HEIGHT][(posX - speed + scrollX) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX - speed + scrollX) / TILE_WIDTH] != 0);
+    if(posY + PLAYER_HEIGHT >= 0 && posY >= 0 && posY + PLAYER_HEIGHT <= WINDOW_HEIGHT && posY <= WINDOW_HEIGHT)
+        return (map[(posY + PLAYER_HEIGHT - 18) / TILE_HEIGHT][(posX - speed + scrollX) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX - speed + scrollX) / TILE_WIDTH] != 0);
+    else
+        return false;
 }
 
 /******************
@@ -195,5 +202,8 @@ bool Level::leftCollision(int posX, int posY, int speed)
 
 bool Level::topCollision(int posX, int posY)
 {
-    return (map[posY / TILE_HEIGHT][(posX + scrollX + 10) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX + PLAYER_WIDTH + scrollX - 10) / TILE_WIDTH] != 0);
+    if(posY >= 0 && posY <= WINDOW_HEIGHT)
+        return (map[posY / TILE_HEIGHT][(posX + scrollX + 10) / TILE_WIDTH] != 0) || (map[posY / TILE_HEIGHT][(posX + PLAYER_WIDTH + scrollX - 10) / TILE_WIDTH] != 0);
+     else
+        return false; 
 }

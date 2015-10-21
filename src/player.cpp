@@ -5,8 +5,6 @@
 * 
 * Author: NehZio <leo.gaspard@outlook.fr>
 * 
-* Description: The player source
-* 
 * Created: 28/08/15
 * =========================
 **/
@@ -23,8 +21,8 @@ Player::Player()
 posX = posY = 0;
 stateWalking = stateFalling = stateDying = false;
 direction = true;
-lives = 3;
 maxLives = 3;
+lives = maxLives;
 jumpSpeed = 0.0f;
 spriteX = 0;
 spriteY = 0;
@@ -163,6 +161,17 @@ void Player::movement(Level& level, sf::RenderWindow& window)
 
     if(level.bottomCollision(posX, posY))
         posY = ((posY + PLAYER_HEIGHT)/ TILE_HEIGHT) * TILE_HEIGHT - PLAYER_HEIGHT;
+    
+    if(stateDying)
+    {
+        lives--;
+        posX = 0;
+        posY = 0;
+        if(lives <= 0)
+            posX = -1500;
+        stateDying = false;
+        jumpSpeed = 0.0f;        
+    }
     
     animation(window);
     

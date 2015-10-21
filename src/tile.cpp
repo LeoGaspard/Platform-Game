@@ -1,10 +1,10 @@
  /**
  * ========================
  * 
- * Filename: main.cpp
+ * Filename: tile.cpp
  * 
  * Author: NehZio <leo.gaspard@outlook.fr>
  * 
- * Created: 28/08/15
+ * Created: 21/10/15
  * =========================
- **/ 
+ **/

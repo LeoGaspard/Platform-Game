@@ -1,11 +1,9 @@
-  /**
+/**
  * ========================
  * 
  * Filename: player.h
  * 
  * Author: NehZio <leo.gaspard@outlook.fr>
- * 
- * Description: The player header
  * 
  * Created: 28/08/15
  * =========================
