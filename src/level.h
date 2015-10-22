@@ -14,7 +14,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <cstdio>
 #include "main.h"
+#include "functions.h"
 
 class Level
 {
@@ -24,15 +26,15 @@ public :
   ~Level();
  
   void loadMap(std::string fileName);
-  void printMap(sf::RenderWindow& window);
+  void update(sf::RenderWindow& window, sf::Sprite playerSprite, int nbrLives, int nbrCoins);
   void setScroll(int scroll);
   int getMap(int x, int y);
   int getScroll();
   int getMapWidth();
-  bool bottomCollision(int posX, int posY);
-  bool rightCollision(int posX, int posY, int speed);
-  bool leftCollision(int posX, int posY, int speed);
-  bool topCollision(int posX, int posY);
+  bool bottomCollision(int posX, int posY, bool stateDying);
+  bool rightCollision(int posX, int posY, int speed, bool stateDying);
+  bool leftCollision(int posX, int posY, int speed, bool stateDying);
+  bool topCollision(int posX, int posY, bool stateDying);
   
   
   
@@ -48,7 +50,10 @@ private :
   int scrollX;
   sf::Texture tileSet;
   sf::Texture bg;
+  sf::Texture headUp;
+  sf::Sprite HUD;
   sf::Sprite backGround;
+  sf::Font font;
   
   
 };

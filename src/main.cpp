@@ -27,8 +27,7 @@ int main()
   while(window.isOpen())
   {
     window.clear();
-    level.printMap(window);
-    player.movement(level, window);
+    player.movement(level, window); 
     
     window.display();
   }

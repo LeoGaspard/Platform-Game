@@ -23,6 +23,7 @@ stateWalking = stateFalling = stateDying = false;
 direction = true;
 maxLives = 3;
 lives = maxLives;
+coins = 0;
 jumpSpeed = 0.0f;
 spriteX = 0;
 spriteY = 0;
@@ -31,25 +32,32 @@ if(!spriteSheet.loadFromFile("pictures/sprite.png"))
 cout << "ERROR : Can't load SpriteSheet";
 }
 
-//DESTRUCTOR
+/******************
+ *   DESTRUCTOR   *
+ ******************/
 
 Player::~Player()
 {
 //nothing
 }
 
-//MOVEMENT
+/******************
+ *    MOVEMENT    *
+ ******************/
 
 void Player::movement(Level& level, sf::RenderWindow& window)
 {
-    if(level.bottomCollision(posX, posY))
-    {
-        stateFalling = false;
-        jumpSpeed = 0.0f;
+    if(posY + PLAYER_HEIGHT - (int)jumpSpeed < 480)
+    {        
+        if(level.bottomCollision(posX, posY, stateDying))
+        {
+            stateFalling = false;
+            jumpSpeed = 0.0f;
+        }
+        else
+            stateFalling = true; 
     }
-    else
-        stateFalling = true; 
-
+    
     sf::Event event;
     while(window.pollEvent(event))
     {
@@ -90,33 +98,36 @@ void Player::movement(Level& level, sf::RenderWindow& window)
         }
     }
 
-    if(inputMap[sf::Keyboard::Left])
+    if(inputMap[sf::Keyboard::Left] && !inputMap[sf::Keyboard::Right])
     {
         stateWalking = true;
         direction = false;
     }  
-    else if(inputMap[sf::Keyboard::Right])
+    if(inputMap[sf::Keyboard::Right] && !inputMap[sf::Keyboard::Left])
     {
         stateWalking = true;
         direction = true;
     }
-    else
-        stateWalking = false;  
+    
+    if((inputMap[sf::Keyboard::Right] && inputMap[sf::Keyboard::Left]) || (!inputMap[sf::Keyboard::Right] && !inputMap[sf::Keyboard::Left]))
+        stateWalking = false;
 
     if(stateFalling)
     {
         posY-=(int)jumpSpeed;
+        
         jumpSpeed -= 0.5;
         
-        while(jumpSpeed > 0 && level.topCollision(posX, posY))
+        while(jumpSpeed > 0 && level.topCollision(posX, posY, stateDying))
         {
             jumpSpeed--;
         }
 
         if(posY > 480)
             stateDying = true;
+        
     }
-
+    
     if(stateWalking)
     {
         speed = 3;
@@ -130,7 +141,7 @@ void Player::movement(Level& level, sf::RenderWindow& window)
 
         if(direction && posX < (1280 - PLAYER_WIDTH))
         {
-            while(level.rightCollision(posX, posY, speed))
+            while(level.rightCollision(posX, posY, speed, stateDying))
             {
                 speed--;                
                 if(speed == 0)
@@ -145,7 +156,7 @@ void Player::movement(Level& level, sf::RenderWindow& window)
 
         if(!direction && posX > 0 && moveTest)
         {
-            while(level.leftCollision(posX, posY, speed))
+            while(level.leftCollision(posX, posY, speed, stateDying))
             {
                 speed--;
                 if(speed == 0)
@@ -158,8 +169,8 @@ void Player::movement(Level& level, sf::RenderWindow& window)
                 posX -= speed;
         }
     }
-
-    if(level.bottomCollision(posX, posY))
+    
+   if(level.bottomCollision(posX, posY, stateDying) && posY + PLAYER_HEIGHT < 480)
         posY = ((posY + PLAYER_HEIGHT)/ TILE_HEIGHT) * TILE_HEIGHT - PLAYER_HEIGHT;
     
     if(stateDying)
@@ -170,18 +181,21 @@ void Player::movement(Level& level, sf::RenderWindow& window)
         if(lives <= 0)
             posX = -1500;
         stateDying = false;
-        jumpSpeed = 0.0f;        
+        jumpSpeed = 0.0f;
+        level.setScroll(-level.getScroll());
     }
     
-    animation(window);
+    animation(window, level);
     
     
     
 }
 
-//ANIMATION
+/******************
+ *    ANIMATION   *
+ ******************/
 
-void Player::animation(sf::RenderWindow& window)
+void Player::animation(sf::RenderWindow& window,Level& level)
 {
     playerSprite.setTexture(spriteSheet);
     
@@ -237,5 +251,15 @@ void Player::animation(sf::RenderWindow& window)
     
     playerSprite.setTextureRect(sf::IntRect(spriteX,spriteY,PLAYER_WIDTH,PLAYER_HEIGHT));
     playerSprite.setPosition(sf::Vector2f(posX, posY));
-    window.draw(playerSprite);
+   
+   level.update(window, playerSprite, lives, coins);
+}
+
+/******************
+ *   GET SPRITE   *
+ ******************/
+
+sf::Sprite Player::getSprite()
+{
+    return playerSprite;
 }

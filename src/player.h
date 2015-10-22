@@ -24,14 +24,15 @@ public :
   ~Player();
   
  void movement(Level& level, sf::RenderWindow& window);
- void animation(sf::RenderWindow& window);
+ void animation(sf::RenderWindow& window, Level& level);
+ sf::Sprite getSprite();
   
 private :
   
   
-  int posX, posY, speed, lives, maxLives, spriteX, spriteY, spriteChange;
+  int posX, posY, speed, lives, maxLives, spriteX, spriteY, spriteChange, coins;
   float jumpSpeed;
-  bool stateWalking, stateJumping, stateFalling, stateDying, direction;
+  bool stateWalking, stateJumping, stateFalling, stateDying, direction, done;
   std::map<sf::Keyboard::Key, bool> inputMap;
   sf::Texture spriteSheet;
   sf::Sprite playerSprite;
